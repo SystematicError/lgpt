@@ -28,6 +28,7 @@ import Control.Exception
 
 -- Modules related to parsing and working with strings
 import Control.Monad ( forM_ )
+import Control.Applicative (liftA2)
 import Data.Proxy
 import Text.Megaparsec (parse, errorBundlePretty, eof)
 import Data.Char (isSpace)
