@@ -4,7 +4,20 @@ LGPT or λGPT is a versatile multipurpose chatbot utilising the [Megaparsec](htt
 
 ![Demo image](https://github.com/user-attachments/assets/5885476f-4c96-44b9-bd98-493a51a76bda)
 
-# Features
+# Skills
+
+LGPT includes various features through skills. Each skill implements a set of specific commands, and some skills integrate with each other. You can learn more about a skill by using the `Help with [SKILL]` command.
+
+| Name   | Description                                                                                                       |
+| ------ | ----------------------------------------------------------------------------------------------------------------- |
+| BrainF | Implementation of [BrainF](https://esolangs.org/wiki/Brainfuck), an esoteric turing complete programming language |
+| Web    | Make HTTP(S) requests and extract JSON data                                                                       |
+| Video  | Replays video files as unicode characters, completely within the terminal                                         |
+| Recall | Interact directly with the AI's memory                                                                            |
+| Math   | Evaluates left associative mathematical expressions in numeric and longhand form                                  |
+| Time   | Perform date and day related calculations                                                                         |
+| Phatic | Reply to [phatic requests](https://en.wikipedia.org/wiki/Phatic_expression<br>)                                   |
+| Debug  | Debug commands to interact directly with the terminal and the AI                                                  |
 
 # Usage
 
