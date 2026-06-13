@@ -18,6 +18,19 @@ dependencies:
 - containers
 - mtl
 - time
+# Extra dependencies
+- bytestring
+- file-embed
+- haskeline
+- text
+- text-metrics
+- snowball
+- aeson
+- aeson-pretty
+- lens
+- lens-aeson
+- http-client
+- wreq
 
 default-extensions:
 - TypeSynonymInstances

@@ -1,58 +1,63 @@
-module LGPT.TUI where
+module LGPT.TUI (runREPL) where
+
+-- Provides a REPL running the AI
 
 {-
-This file is the main entry point to your coursework.
-
-You can create or modify any files in src/ as much as you like. The 
-code that is included here is a good starting point, but you don't need to 
-keep it if you don't want to.
+Package Justification
+---------------------
+haskeline - Same interactive line editing library used by GHCI, quite powerful
 -}
-import Control.Monad
+
+import Control.Monad.State
+import LGPT.Error (handleErrorBundle)
+import LGPT.Grammar
+import LGPT.Helpers (prompt)
+import LGPT.Memory (Memory)
+import LGPT.Memory qualified as Memory
+import LGPT.Skills
+import System.Console.Haskeline
 import Text.Megaparsec
-import Text.Megaparsec.Char
-import LGPT.Helpers (Parser, prompt, runStart)   
-import LGPT.Numbers (parseLonghand, printLonghand)
 
+-- Creates a top level parser by merging skills
+parseRequest :: Parser (IO ())
+parseRequest =
+  mergeSkills
+    [ BrainF,
+      Video,
+      Web,
+      Phatic,
+      Math,
+      Time,
+      Recall,
+      Debug
+    ]
 
---------------------------------------------------------------------------------
-{- | Our program. It runs a loop which:
-      1. Reads a line of input
-      2. Parses it into a structured Request
-      3. Does something based on that request (normally printing something out).
--}
+-- Parse a given user request and run the corresponding action
+handleRequest :: String -> StateT Memory (InputT IO) ()
+handleRequest str = do
+  -- Parse and update state
+  let parserAction = runParserT parseRequest "" str
+  result <- mapStateT liftIO parserAction
+
+  -- Allow IO actions to be interrupted with <Control-C>
+  let interruptable = handleInterrupt (outputStrLn "\nInterrupted.") . withInterrupt
+  let liftInterruptableIO action = lift $ interruptable $ liftIO action
+
+  liftInterruptableIO $ case result of
+    Left error -> handleErrorBundle error
+    Right action -> action
+
+-- The REPL's primary loop
+loop :: StateT Memory (InputT IO) ()
+loop = do
+  request <- lift $ getInputLine prompt
+
+  case request of
+    Nothing -> pure () -- Stop REPL
+    Just "" -> loop -- Forgive accidental enter presses
+    Just str -> handleRequest str >> loop
+
+-- REPL for the AI
+-- Run each monad transformer layer to get a final IO action
 runREPL :: IO ()
-runREPL = forever $ do
-  putStr prompt
-  req <- getLine
-  respondTo (readRequest req)
-
-
---------------------------------------------------------------------------------
--- Parsing and responding to requests:
-
-
--- | Our request type, the result of parsing a string.
-data Request = Unknown
-  deriving (Eq, Ord, Show)
-
-
-{- | Read a request. 
-
-    This runs the parse function from Megaparsec, and
-    converts any failed parses into an Unknown request.
--}
-readRequest :: String -> Request
-readRequest str = case parse parseRequest "<stdin>" str of
-  Left  err -> Unknown
-  Right req -> req
-  
-
--- | Currently, the only thing λGPT understands is "Hello"...
-parseRequest :: Parser Request
-parseRequest = fail "No requests implemented yet!"
-
-
--- | Respond to a request. This is where the behaviours of λGPT will go, but 
--- for now it just responds to "Hello".
-respondTo :: Request -> IO ()
-respondTo Unknown = putStrLn "I don't understand that."
+runREPL = runInputT defaultSettings (evalStateT loop Memory.initial)

@@ -1,4 +1,10 @@
 {-
+Modifications made
+------------------
+1. Longhand number tests have been enabled, since I modified those parsers
+2. `parse` has been redefined to be compatible with my parser type, while being transparent to the tests
+
+
 You aren't required to edit this file, but do feel free to take a look. You 
 could add some tests, if you think of new ones and are able to figure out the
 format that they should be specified in.
@@ -30,7 +36,7 @@ import Control.Exception
 import Control.Monad ( forM_ )
 import Control.Applicative (liftA2)
 import Data.Proxy
-import Text.Megaparsec (parse, errorBundlePretty, eof)
+import Text.Megaparsec (runParserT, errorBundlePretty, eof)
 import Data.Char (isSpace)
 import Text.Regex.TDFA
 import Data.List (dropWhileEnd)
@@ -42,7 +48,21 @@ import LGPT.Numbers
 import qualified Data.Text as T
 import LGPT.Helpers (prompt)
 
+--------------------------------------------------------
 
+import LGPT.Memory qualified as Memory
+import Control.Monad.State (evalStateT)
+import System.IO.Unsafe (unsafePerformIO)
+
+-- For compatability purposes
+-- Allows the longhand tests to run as is without modifying the existing test code
+--
+-- Calling `unsafePerformIO` because `Parser` has an IO layer, however the parsers in `Numbers.hs`
+-- should be pure, since they do not have any `liftIO` calls
+-- Don't worry, this is the only place im using `unsafePerformIO` :)
+parse parser file str = unsafePerformIO $ evalStateT (runParserT parser file str) Memory.initial
+
+--------------------------------------------------------
 
 main :: IO ()
 main = do
@@ -66,8 +86,9 @@ main = do
   let 
     tests = testGroup "Tests"
       [ 
-        -- longformNumberTests
-        -- , longformPropertyTest
+        -- Longhand number tests have been enabled
+        longformNumberTests,
+        longformPropertyTest,
         testGroup "Part Zero" [
           testCase "Exercise 1: Hello" $ do
             checkExercise o1 ["Hi there!"]
