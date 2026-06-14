@@ -16,7 +16,7 @@ LGPT includes various features through skills. Each skill implements a set of sp
 | Recall | Interact directly with the AI's memory                                                                            |
 | Math   | Evaluates left associative mathematical expressions in numeric and longhand form                                  |
 | Time   | Perform date and day related calculations                                                                         |
-| Phatic | Reply to [phatic requests](https://en.wikipedia.org/wiki/Phatic_expression<br>)                                   |
+| Phatic | Reply to [phatic requests](https://en.wikipedia.org/wiki/Phatic_expression)                                       |
 | Debug  | Debug commands to interact directly with the terminal and the AI                                                  |
 
 # Usage
