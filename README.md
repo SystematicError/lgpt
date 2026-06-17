@@ -2,6 +2,8 @@
 
 LGPT or λGPT is a versatile multipurpose chatbot utilising the [Megaparsec](https://hackage.haskell.org/package/megaparsec) library's monadic parsing capabilities.
 
+I have produced a [report](https://github.com/SystematicError/lgpt/blob/main/report.pdf) briefly describing the codebase structure, the AI's feature set, and some internal architectural decisions. I have also written a small [blog post](https://pranavmanoj.net/blog/megaparsec-stateful) showing how to write similar parsers with "memory" using monad transformers.
+
 This project was submitted as part of the coursework required by my university's [CS141](https://warwick.ac.uk/fac/sci/dcs/teaching/modules/cs141/) module, and was awarded a grade of 100% (High First Class).
 
 ![Demo image](https://github.com/user-attachments/assets/5885476f-4c96-44b9-bd98-493a51a76bda)
